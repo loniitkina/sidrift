@@ -1,11 +1,11 @@
-# ice-back-track
+# sidrift
 
 Compute backwards trajectory of sea ice parcel using OSI-SAF sea ice drift and ice concentration products
 
 ## Usage
 Execute the CLI app like this:
 ```
-$  ice-back-track git:(main) ✗ PYTHONPATH=lib python3 bin/track --help
+$  sidrift git:(main) ✗ PYTHONPATH=lib python3 bin/track --help
 ```
 
 ## Options and arguments
