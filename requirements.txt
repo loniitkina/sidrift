@@ -1,0 +1,7 @@
+pathlib
+pyproj
+black
+xarray
+numpy
+fastapi
+netCDF4
