@@ -1,6 +1,7 @@
 # vim: filetype=python
 from fastapi import FastAPI
-from lib.icebacktrack.track import backtrack
+from sidrift.track import backtrack as bktrk
+from datetime import datetime
 
 app = FastAPI()
 
@@ -8,9 +9,9 @@ app = FastAPI()
 async def read_root():
     return {"Hello": "World"}
 
-@app.get("/backtrack/{item_id}")
-async def backtrack(item_id: int, q: str = None):
-    return {"item_id": item_id, "q": q}
+@app.get("/backtrack/")
+async def backtrack(start_date: datetime, lon_0: float, lat_0: float):
+    return bktrk(start_date, lon_0, lat_0)
 
 if __name__ == "__main__":
     import uvicorn
