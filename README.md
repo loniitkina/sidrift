@@ -2,10 +2,15 @@
 
 Compute backwards trajectory of sea ice parcel using OSI-SAF sea ice drift and ice concentration products
 
-# Usage
+## Usage
+Execute the CLI app like this:
 ```
 ➜  ice-back-track git:(main) ✗ PYTHONPATH=. python3 bin/track --help
+```
 
+## Options and arguments
+
+```
  Usage: track [OPTIONS] START_DATE:[%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d
               %H:%M:%S] LON_0 LAT_0 OUTPUT
 
