@@ -1,7 +1,6 @@
 # vim: filetype=python
 
 from datetime import datetime
-from pathlib import Path
 from icebacktrack.track import backtrack
 import os
 import typer
@@ -14,11 +13,11 @@ def track(
             start_date: datetime = typer.Argument(..., help="Start date for backtracking"),
             lon_0: float = typer.Argument(..., help="Longitude of mooring/end position"),
             lat_0: float = typer.Argument(..., help="Latitude of mooring/end position"),
-            output: Path = typer.Argument(..., help="Destination path for results"),
+            output: str = typer.Argument(..., help="Destination path for results"),
             min_ice_conc: int = typer.Option(70, help="Minimum ice concentration"),
             search_radius: int = typer.Option(100, help="Search radius for OSI-SAF drift (in km)"),
          ):
-        if output.exists():
+        if os.path.exists(output):
             os.remove(output)
         backtrack(start_date, lon_0, lat_0, min_ice_conc, search_radius, output)
 

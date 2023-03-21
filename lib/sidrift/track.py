@@ -1,5 +1,3 @@
-
-
 from datetime import datetime, timedelta
 import numpy as np
 import os
@@ -7,9 +5,15 @@ import os
 import xarray as xr
 from pyproj import Proj, transform
 
-def backtrack(start_date, lon_0, lat_0, min_ice_conc, search_radius, output):
 
-
+def backtrack(
+    start_date: datetime,
+    lon_0: float,
+    lat_0: float,
+    min_ice_conc: float = 70,
+    search_radius: float = 100,
+    output: str = None,
+):
     ##mooring position
     inProj = Proj(init="epsg:4326")
     # OSI-SAF proj: proj4_string = "+proj=stere +a=6378273 +b=6356889.44891 +lat_0=90 +lat_ts=70 +lon_0=-45"
@@ -26,7 +30,9 @@ def backtrack(start_date, lon_0, lat_0, min_ice_conc, search_radius, output):
     print(xmoor_start, ymoor_start)
 
     # OSI_SAF drift
-    iceconc_url = "https://thredds.met.no/thredds/dodsC/osisaf/met.no/ice/conc_nh_pol_agg"
+    iceconc_url = (
+        "https://thredds.met.no/thredds/dodsC/osisaf/met.no/ice/conc_nh_pol_agg"
+    )
     drift_url = "https://thredds.met.no/thredds/dodsC/osisaf/met.no/ice/drift_lr_nh_agg"
 
     ds_drift = xr.open_dataset(drift_url)
@@ -38,12 +44,12 @@ def backtrack(start_date, lon_0, lat_0, min_ice_conc, search_radius, output):
 
     start = start_date
     xmoor = xmoor_start.copy()
-    ymoor = ymoor_start.copy()  # use .copy() or xmoor_start will become reference of xmoor
+    ymoor = (
+        ymoor_start.copy()
+    )  # use .copy() or xmoor_start will become reference of xmoor
 
     # do backtrajectories for each mooring point
-    print(
-        "#########################################################################"
-    )
+    print("#########################################################################")
     date = start
     bt_lon = [moor_lon[0]]
     bt_lat = [moor_lat[0]]
@@ -109,9 +115,7 @@ def backtrack(start_date, lon_0, lat_0, min_ice_conc, search_radius, output):
             # if we start in December or November (same year) freeze-up will not be identified and the loop will end here
             ice = False
             print("No more ice!", date)
-            # print(dx.values) #just nans
 
-    # print whre we end up
     print(
         "trajectory of days: ",
         len(bt_lat),
@@ -122,12 +126,16 @@ def backtrack(start_date, lon_0, lat_0, min_ice_conc, search_radius, output):
 
     # write out text files with dates and coordinates
     tt = [bt_date, bt_lon, bt_lat]
-    # adjusted to python3:
     table = list(zip(*tt))
 
-    if os.path.exists(output):
-        os.remove(output)
-
-    with open(output, "ab") as f:
-        np.savetxt(f, table, fmt="%s", delimiter=",")
-
+    if not output:
+        for i, _ in enumerate(table):
+            print(table[i])
+    else:
+        try:
+            os.remove(output)
+        except:
+            pass
+        finally:
+            with open(output, "ab") as f:
+                np.savetxt(f, table, fmt="%s", delimiter=",")
