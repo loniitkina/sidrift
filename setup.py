@@ -14,6 +14,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/loniitkina/sidrift",
     packages=setuptools.find_packages(include=["sidrift"]),
+    scripts=["bin/sidtrack"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
