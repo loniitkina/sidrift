@@ -1,0 +1,10 @@
+sidrift.egg-info/top_level.txt
+bin/webapp
+sidrift.egg-info/PKG-INFO
+sidrift.egg-info/SOURCES.txt
+sidrift.egg-info/dependency_links.txt
+sidrift/__pycache__/track.cpython-310.pyc
+sidrift/__pycache__/__init__.cpython-310.pyc
+out.geojson
+out.csv
+tst.csv

@@ -6,3 +6,5 @@ xarray
 numpy
 fastapi
 netCDF4
+geopandas
+shapely

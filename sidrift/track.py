@@ -13,6 +13,7 @@ def backtrack(
     min_ice_conc: float = 70,
     search_radius: float = 100,
     output: str = None,
+    limit: int = None,
 ):
     ##mooring position
     inProj = Proj(init="epsg:4326")
@@ -57,8 +58,9 @@ def backtrack(
     print(date, moor_lon[0], moor_lat[0])
 
     ice = True
+    cnt = 0  # counter for limiting the number of iterations
 
-    while ice == True:
+    while ice == True and cnt < limit:
         ic = ds_ic.ice_conc.sel(time=date, xc=xmoor[0], yc=ymoor[0], method="nearest")
         icm = np.mean(np.ma.masked_invalid(ic.values))
 
@@ -116,6 +118,9 @@ def backtrack(
             ice = False
             print("No more ice!", date)
 
+        print("COUNTER is   ", cnt)
+        cnt += 1
+
     print(
         "trajectory of days: ",
         len(bt_lat),
@@ -126,11 +131,10 @@ def backtrack(
 
     # write out text files with dates and coordinates
     tt = [bt_date, bt_lon, bt_lat]
-    table = list(zip(*tt))
+    table = [(x[0].strftime("%Y-%m-%d"), x[1], x[2]) for x in list(zip(*tt))]
 
     if not output:
-        for i, _ in enumerate(table):
-            print(table[i])
+        return table
     else:
         try:
             os.remove(output)
