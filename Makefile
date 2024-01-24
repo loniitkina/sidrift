@@ -15,3 +15,14 @@ stop:
 clean:
 	docker rm $(CONTAINER_NAME)
 	docker rmi $(IMAGE_NAME)
+
+install-dev:
+	pip install -e .
+	
+install-deps:
+	pip install -r requirements.txt
+	pip install -r requirements.dev.txt
+	
+test:
+	pytest
+	

@@ -13,7 +13,7 @@ def backtrack(
     min_ice_conc: float = 70,
     search_radius: float = 100,
     output: str = None,
-    limit: int = None,
+    limit_days: int = 100,
 ):
     ##mooring position
     inProj = Proj(init="epsg:4326")
@@ -60,7 +60,7 @@ def backtrack(
     ice = True
     cnt = 0  # counter for limiting the number of iterations
 
-    while ice == True and cnt < limit:
+    while ice == True and cnt < limit_days:
         ic = ds_ic.ice_conc.sel(time=date, xc=xmoor[0], yc=ymoor[0], method="nearest")
         icm = np.mean(np.ma.masked_invalid(ic.values))
 
