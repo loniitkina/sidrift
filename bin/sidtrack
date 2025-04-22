@@ -16,14 +16,15 @@ def track(
     lon_0: float = typer.Argument(..., help="Longitude of mooring/end position"),
     lat_0: float = typer.Argument(..., help="Latitude of mooring/end position"),
     output: str = typer.Argument(..., help="Destination path for results"),
-    min_ice_conc: int = typer.Option(70, help="Minimum ice concentration"),
+    min_ice_conc: int = typer.Option(15, help="Minimum ice concentration"),
     search_radius: int = typer.Option(
-        100, help="Search radius for OSI-SAF drift (in km)"
-    ),
+        100, help="Search radius for OSI-SAF drift (in km)"),
+    limit_days: int = typer.Option(730, help="Max tracking days"),
+    hemisphere: str = typer.Option('sh', help="Hemisphere"),
 ):
     if os.path.exists(output):
         os.remove(output)
-    backtrack(start_date, lon_0, lat_0, min_ice_conc, search_radius, output)
+    backtrack(start_date, lon_0, lat_0, min_ice_conc, search_radius, output, limit_days, hemisphere)
 
 
 if __name__ == "__main__":

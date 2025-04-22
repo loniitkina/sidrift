@@ -10,17 +10,35 @@ def backtrack(
     start_date: datetime,
     lon_0: float,
     lat_0: float,
-    min_ice_conc: float = 70,
+    min_ice_conc: float = 15,
     search_radius: float = 100,
     output: str = None,
-    limit_days: int = 100,
+    limit_days: int = 730,
+    hemisphere: str = 'sh'
 ):
+    #decide hemisphere
+    if hemisphere=='nh':
+    	outProj = Proj(
+        "+proj=stere +a=6378273 +b=6356889.44891 +lat_0=90 +lat_ts=70 +lon_0=-45 +units=km"
+    )
+    	iceconc_url = (
+        "https://thredds.met.no/thredds/dodsC/osisaf/met.no/ice/conc_nh_pol_agg"
+    )
+    	drift_url = "https://thredds.met.no/thredds/dodsC/osisaf/met.no/ice/drift_lr_nh_agg"
+    if hemisphere=='sh':
+    	outProj = Proj(
+        "+proj=stere +a=6378273 +b=6356889.44891 +lat_0=-90 +lat_ts=-70 +lon_0=0 +units=km"
+    )
+    	iceconc_url = (
+        "https://thredds.met.no/thredds/dodsC/osisaf/met.no/ice/conc_sh_pol_agg"
+    )
+    	drift_url = "https://thredds.met.no/thredds/dodsC/osisaf/met.no/ice/drift_lr_sh_agg"
+    
+    
     ##mooring position
     inProj = Proj(init="epsg:4326")
     # OSI-SAF proj: proj4_string = "+proj=stere +a=6378273 +b=6356889.44891 +lat_0=90 +lat_ts=70 +lon_0=-45"
-    outProj = Proj(
-        "+proj=stere +a=6378273 +b=6356889.44891 +lat_0=90 +lat_ts=70 +lon_0=-45 +units=km"
-    )
+    
 
     # Fram Strait moorings
     # [ -8, 78.83, 0, 79 ]   #approx bounding box
@@ -31,10 +49,7 @@ def backtrack(
     print(xmoor_start, ymoor_start)
 
     # OSI_SAF drift
-    iceconc_url = (
-        "https://thredds.met.no/thredds/dodsC/osisaf/met.no/ice/conc_nh_pol_agg"
-    )
-    drift_url = "https://thredds.met.no/thredds/dodsC/osisaf/met.no/ice/drift_lr_nh_agg"
+    
 
     ds_drift = xr.open_dataset(drift_url)
 
@@ -54,7 +69,8 @@ def backtrack(
     date = start
     bt_lon = [moor_lon[0]]
     bt_lat = [moor_lat[0]]
-    bt_date = [start]
+    bt_date = [start] 
+    bt_ic = [100]
     print(date, moor_lon[0], moor_lat[0])
 
     ice = True
@@ -109,6 +125,7 @@ def backtrack(
             bt_lon.append(lon)
             bt_lat.append(lat)
             bt_date.append(date)
+            bt_ic.append(icm)
 
             # walk back in time by 1 day
             date = date - timedelta(days=1)
@@ -130,8 +147,8 @@ def backtrack(
     )
 
     # write out text files with dates and coordinates
-    tt = [bt_date, bt_lon, bt_lat]
-    table = [(x[0].strftime("%Y-%m-%d"), x[1], x[2]) for x in list(zip(*tt))]
+    tt = [bt_date, bt_lon, bt_lat, bt_ic]
+    table = [(x[0].strftime("%Y-%m-%d"), x[1], x[2], x[3]) for x in list(zip(*tt))]
 
     if not output:
         return table
